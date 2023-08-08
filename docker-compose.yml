@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:14
+    restart: always
+    environment:
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: password
+    expose:
+      - '5432'
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+  app:
+    build: .
+    command: bundle exec rails s -p 3000 -e development -b '0.0.0.0'
+    environment:
+      RAILS_ENV: development
+      RAILS_MAX_THREADS: 5
+      DATABASE_HOST: postgres
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: password
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+volumes:
+  postgres: # Named volume
